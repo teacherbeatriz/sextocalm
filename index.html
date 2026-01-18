@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Noise & Excellence Dashboard</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(76,175,80,0.15), transparent 40%),
+        radial-gradient(circle at top right, rgba(244,67,54,0.15), transparent 40%),
+        linear-gradient(180deg, #f4f6f8, #dde3ea);
+      margin: 0;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      text-align: center;
+      color: #555;
+      margin-top: 0;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .team-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    .team-card h2 {
+      margin: 0 0 16px 0;
+      text-align: center;
+    }
+    .metric {
+      margin-bottom: 18px;
+    }
+    .metric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .progress-container {
+      background: #e0e0e0;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 14px;
+    }
+    .progress-bar {
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    button {
+      flex: 1;
+      margin: 0 4px;
+      padding: 6px 0;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: white;
+    }
+    .btn-excellence {
+      background: #2e7d32;
+    }
+    .btn-excellence:hover {
+      background: #1b5e20;
+    }
+    .btn-noise {
+      background: #c62828;
+    }
+    .btn-noise:hover {
+      background: #8e0000;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Team Evolution Dashboard</h1>
+  <p class="subtitle">🎯 Independent indicators for Excellence and Noise</p>
+
+  <div style="text-align:center; margin-top:16px;">
+    <button id="resetAll" style="max-width:220px; background:#455a64;">🔄 Reset all teams</button>
+  </div>
+
+  <div class="dashboard" id="dashboard"></div>
+
+  <script>
+    const maxValue = 100;
+    const step = 10;
+
+    const teams = [
+      { name: "Team A", excellence: 40, noise: 60 },
+      { name: "Team B", excellence: 30, noise: 70 },
+      { name: "Team C", excellence: 50, noise: 50 },
+      { name: "Team D", excellence: 20, noise: 80 },
+      { name: "Team E", excellence: 60, noise: 40 }
+    ];
+
+    const dashboard = document.getElementById("dashboard");
+    const resetButton = document.getElementById("resetAll");
+
+    function render() {
+      dashboard.innerHTML = "";
+
+      teams.forEach((team, index) => {
+        const card = document.createElement("div");
+        card.className = "team-card";
+
+        card.innerHTML = `
+          <h2>👥 ${team.name}</h2>
+
+          <div class="metric">
+            <div class="metric-header">
+              <span>🌟 Excellence</span>
+              <span>${team.excellence}%</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" style="width: ${team.excellence}%; background: linear-gradient(90deg, #66bb6a, #2e7d32);"></div>
+            </div>
+            <div class="controls">
+              <button class="btn-excellence" onclick="updateExcellence(${index}, -step)">-</button>
+              <button class="btn-excellence" onclick="updateExcellence(${index}, step)">+</button>
+            </div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-header">
+              <span>🔊 Noise</span>
+              <span>${team.noise}%</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" style="width: ${team.noise}%; background: linear-gradient(90deg, #ef5350, #c62828);"></div>
+            </div>
+            <div class="controls">
+              <button class="btn-noise" onclick="updateNoise(${index}, -step)">-</button>
+              <button class="btn-noise" onclick="updateNoise(${index}, step)">+</button>
+            </div>
+          </div>
+        `;
+
+        dashboard.appendChild(card);
+      });
+    }
+
+    function updateExcellence(teamIndex, change) {
+      teams[teamIndex].excellence = Math.max(0, Math.min(maxValue, teams[teamIndex].excellence + change));
+      render();
+    }
+
+    function updateNoise(teamIndex, change) {
+      teams[teamIndex].noise = Math.max(0, Math.min(maxValue, teams[teamIndex].noise + change));
+      render();
+    }
+
+    function resetAllTeams() {
+      teams.forEach(team => {
+        team.excellence = 0;
+        team.noise = 0;
+      });
+      render();
+    }
+
+    resetButton.addEventListener("click", resetAllTeams);
+
+    render();
+  </script>
+</body>
+</html>
