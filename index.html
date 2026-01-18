@@ -24,17 +24,19 @@
       color: #555;
       margin-top: 0;
     }
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    .team-row-center {
+      display: flex;
+      justify-content: center;
       gap: 24px;
-      margin-top: 32px;
+      margin-bottom: 24px;
     }
     .team-card {
       background: #ffffff;
       border-radius: 16px;
       padding: 20px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 320px;
     }
     .team-card h2 {
       margin: 0 0 16px 0;
@@ -97,7 +99,7 @@
     <button id="resetAll" style="max-width:220px; background:#455a64;">🔄 Reset all teams</button>
   </div>
 
-  <div class="dashboard" id="dashboard"></div>
+  <div id="dashboard"></div>
 
   <script>
     const maxValue = 100;
@@ -117,44 +119,61 @@
     function render() {
       dashboard.innerHTML = "";
 
-      teams.forEach((team, index) => {
-        const card = document.createElement("div");
-        card.className = "team-card";
+      // Top row (A-B-C)
+      const topRow = document.createElement('div');
+      topRow.className = 'team-row-center';
+      for (let i = 0; i < 3; i++) {
+        topRow.appendChild(createTeamCard(i));
+      }
+      dashboard.appendChild(topRow);
 
-        card.innerHTML = `
-          <h2>👥 ${team.name}</h2>
+      // Bottom row (D-E) centered
+      const bottomRow = document.createElement('div');
+      bottomRow.className = 'team-row-center';
+      for (let i = 3; i < 5; i++) {
+        bottomRow.appendChild(createTeamCard(i));
+      }
+      dashboard.appendChild(bottomRow);
+    }
 
-          <div class="metric">
-            <div class="metric-header">
-              <span>🌟 Excellence</span>
-              <span>${team.excellence}%</span>
-            </div>
-            <div class="progress-container">
-              <div class="progress-bar" style="width: ${team.excellence}%; background: linear-gradient(90deg, #66bb6a, #2e7d32);"></div>
-            </div>
-            <div class="controls">
-              <button class="btn-excellence" onclick="updateExcellence(${index}, -step)">-</button>
-              <button class="btn-excellence" onclick="updateExcellence(${index}, step)">+</button>
-            </div>
+    function createTeamCard(index) {
+      const team = teams[index];
+      const card = document.createElement("div");
+      card.className = "team-card";
+
+      card.innerHTML = `
+        <h2>👥 ${team.name}</h2>
+
+        <div class="metric">
+          <div class="metric-header">
+            <span>🌟 Excellence</span>
+            <span>${team.excellence}%</span>
           </div>
-
-          <div class="metric">
-            <div class="metric-header">
-              <span>🔊 Noise</span>
-              <span>${team.noise}%</span>
-            </div>
-            <div class="progress-container">
-              <div class="progress-bar" style="width: ${team.noise}%; background: linear-gradient(90deg, #ef5350, #c62828);"></div>
-            </div>
-            <div class="controls">
-              <button class="btn-noise" onclick="updateNoise(${index}, -step)">-</button>
-              <button class="btn-noise" onclick="updateNoise(${index}, step)">+</button>
-            </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: ${team.excellence}%; background: linear-gradient(90deg, #66bb6a, #2e7d32);"></div>
           </div>
-        `;
+          <div class="controls">
+            <button class="btn-excellence" onclick="updateExcellence(${index}, -step)">-</button>
+            <button class="btn-excellence" onclick="updateExcellence(${index}, step)">+</button>
+          </div>
+        </div>
 
-        dashboard.appendChild(card);
-      });
+        <div class="metric">
+          <div class="metric-header">
+            <span>🔊 Noise</span>
+            <span>${team.noise}%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: ${team.noise}%; background: linear-gradient(90deg, #ef5350, #c62828);"></div>
+          </div>
+          <div class="controls">
+            <button class="btn-noise" onclick="updateNoise(${index}, -step)">-</button>
+            <button class="btn-noise" onclick="updateNoise(${index}, step)">+</button>
+          </div>
+        </div>
+      `;
+
+      return card;
     }
 
     function updateExcellence(teamIndex, change) {
